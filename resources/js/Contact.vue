@@ -1,6 +1,6 @@
 <template>
  <div class="container">
-  <product_categoryVue/>
+  <!-- <product_categoryVue/> -->
     <h1>Trang sản phẩm</h1>
     <!--  -->
 
@@ -13,19 +13,7 @@
   </div>
   <div class="offcanvas-body">
     <div class="cart" style="display:inline-grid">
-      <!-- <button class="btn btn-info" @click="showCart">Xem giỏ hàng</button>
-      <div v-if="cart.length > 0">
-        <h3>Giỏ hàng:</h3>
-        <ul>
-          <li v-for="item in cart" :key="item.id">
-            {{ item.name }} x{{ item.quantity }}
-            <button @click="removeFromCart(item.id)" class="btn btn-danger">Xóa</button>
-          </li>
-        </ul>
-      </div>
-      <div v-else>
-        <p>Giỏ hàng trống!</p>
-      </div> -->
+     
 
         <div class="cart-container">
     <!-- Danh sách giỏ hàng -->
@@ -38,7 +26,7 @@
             <!-- Chỉnh sửa số lượng sản phẩm -->
             <input type="number" v-model="item.quantity" @change="updateQuantity(item.id, item.quantity)" min="1" />
           </div>
-          <button @click="removeFromCart(item.id)">Xóa</button>
+          <div class="btn btn-danger" @click="removeFromCart(item.id)">Xóa</div >
         </li>
       </ul>
     </div>

@@ -3,13 +3,12 @@
     <!-- <input type="text" v-model="categoryId" placeholder="Nhập Category ID" /> -->
 
     <ul style="display:flex">
-     
-
-     
-    
-
       <li class="li_cate" v-for="product in products" :key="product.id">
-        <div class="btn btn-primary" @click="fetchProductsByCategory(product.id)">
+        <div class="btn"  :class="{
+      'btn-primary': activeCategoryId !== product.id,
+      'btn-success': activeCategoryId === product.id
+    }"
+     @click="fetchProductsByCategory(product.id)">
           {{ product.name }}
         </div>
       </li>
@@ -44,11 +43,8 @@ const loading = ref(false);
 onMounted(async() => {
    const response = await fetch(`/api/category`);
     const data = await response.json();
-
     products.value = data;
-    
 
- console.log(data)
  
     
 });
@@ -56,21 +52,15 @@ onMounted(async() => {
 
 
 
-// const categoryId = ref(); // hoặc từ dropdown, checkbox...
 
-// fetch(`/api/cate_product?category_id=${categoryId}`)
-//   .then(res => res.json())
-//   .then(data => {
-//     console.log(data.users);      
-   
-//   });
 
 const categoryId = ref('')
 const find = ref();
-
+const activeCategoryId = ref(null);
 // Theo dõi thay đổi categoryId → tự động fetch lại sản phẩm
-const fetchProductsByCategory = async (newVal) => {
-  if (!newVal) {
+const fetchProductsByCategory = async (categoryId) => {
+   activeCategoryId.value = categoryId; 
+  if (!categoryId) {
     productsall.value = [];
     return;
   }
@@ -79,7 +69,7 @@ const fetchProductsByCategory = async (newVal) => {
   find.value = "";       // Xóa thông báo cũ
 
   try {
-    const response = await fetch(`/api/cate_product?category_id=${newVal}`);
+    const response = await fetch(`/api/cate_product?category_id=${categoryId}`);
     const data = await response.json();
 
     if (!data.users || data.users.length === 0) {
