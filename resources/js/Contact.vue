@@ -106,7 +106,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
-// import product_categoryVue from './product_category.vue';
+import product_categoryVue from './product_category.vue';
 
 const router = useRouter();
 const toast = useToast();
