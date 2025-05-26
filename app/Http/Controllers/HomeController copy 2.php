@@ -160,82 +160,48 @@ class HomeController extends Controller
     //     return response()->json(['message' => 'Không tìm thấy sản phẩm'], 404);
     // }
 
-    // public function add(Request $request)
-    // {
-    //       $validated = $request->validate([
-    //     'name' => 'required|string|max:255',
-    //     // 'email' => 'required|email|unique:users,email',
-    //     // 'password' => 'required|min:6|confirmed',
-    // ]);
-    
-    //     $user = new Flight();
-    //     $user->name = $request->input('name');
-    //     if($request->input('class') != null)
-    //     {
-    //     $user->class = $request->input('class');
-    //     }
-    //     else
-    //     {
-    //     $user->class = $user->convert_name($request->input('name'));
-    //     }
-
-    //     if ($request->hasFile('image')) {
-    //         $file = $request->file('image');
-    //         $fileName = time() . '_' . $file->getClientOriginalName();
-    //         $file->move(public_path('uploads'), $fileName);
-    //         $user->image = '/uploads/' . $fileName;
-    //     }
-    //     $user->detail = $request->input('detail');
-        
-    //     $user->save();
-        
-    //      // Lấy danh sách category_ids từ request và gán vào sản phẩm
-    // if ($request->has('categories')) {
-    //     $categoryIds = $request->input('categories');
-    //     $user->categories()->attach($categoryIds); // Gán các category cho sản phẩm
-    // }
-
-    //    // Gán các category cố định (ví dụ: categories có id = 1, 2, 3)
-    // //    $categoryIds = [1,2]; 
-    //     // Đây là giá trị cố định bạn muốn gán
-    // //    $user->categories()->attach($categoryIds); // Gán các category cho sản phẩm
-
-    //     return response()->json($user);
-    // }
-
-
     public function add(Request $request)
-{
-    try {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'required|image|max:2048',
-            'detail' => 'required|string'
-        ]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json(['errors' => $e->errors()], 422);
-    }
+    {
+          $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        // 'email' => 'required|email|unique:users,email',
+        // 'password' => 'required|min:6|confirmed',
+    ]);
+    
+        $user = new Flight();
+        $user->name = $request->input('name');
+        if($request->input('class') != null)
+        {
+        $user->class = $request->input('class');
+        }
+        else
+        {
+        $user->class = $user->convert_name($request->input('name'));
+        }
 
-    $user = new Flight();
-    $user->name = $request->input('name');
-    $user->class = $request->input('class') ?? $user->convert_name($request->input('name'));
-
-    if ($request->hasFile('image')) {
-        $file = $request->file('image');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('uploads'), $fileName);
-        $user->image = '/uploads/' . $fileName;
-    }
-
-    $user->detail = $request->input('detail');
-    $user->save();
-
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $fileName);
+            $user->image = '/uploads/' . $fileName;
+        }
+        $user->detail = $request->input('detail');
+        
+        $user->save();
+        
+         // Lấy danh sách category_ids từ request và gán vào sản phẩm
     if ($request->has('categories')) {
-        $user->categories()->attach($request->input('categories'));
+        $categoryIds = $request->input('categories');
+        $user->categories()->attach($categoryIds); // Gán các category cho sản phẩm
     }
 
-    return response()->json($user);
-}
+       // Gán các category cố định (ví dụ: categories có id = 1, 2, 3)
+    //    $categoryIds = [1,2]; 
+        // Đây là giá trị cố định bạn muốn gán
+    //    $user->categories()->attach($categoryIds); // Gán các category cho sản phẩm
+
+        return response()->json($user);
+    }
 
     public function sort(Request $request)
     {

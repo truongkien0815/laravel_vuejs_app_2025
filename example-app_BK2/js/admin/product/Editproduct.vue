@@ -1,60 +1,41 @@
 <template>
-  <div class="container">
-    <div><label for="">tên sản phẩm</label></div>
+   <div class="container">
+      <div> <label for="">tên sản phẩm</label></div>
+      <input v-model="editedName" placeholder="Sửa tên sản phẩm" class="form-control"/>
+      <div> <label for="">tên slug</label></div>   
+      <div class="text-class"> <input class="form-control" v-model="editclass" placeholder="Nhập slug"  /></div>
+      
+       <div> <label for="">Chi tiết</label></div>   
+      <textarea name="" v-model="editdetail" id="editor"   cols="30" rows="10"></textarea>
+      <br>
+    
+      <img :src="img_product" alt="Ảnh sản phẩm" v-if="img_product" width="200px"/>
+      <input type="file" name="img_product" @change="onFileChange" />
+
+      
+<div>
+  <div class="row">
+    <div class="col-2"> <label>Chọn danh mục:</label></div>
+    <div class="col-10">
+      <div v-for="item in categories_all" :key="item.id">
+  <label>
     <input
-      v-model="editedName"
-      placeholder="Sửa tên sản phẩm"
-      class="form-control"
+      type="checkbox"
+      :value="item.id"
+      v-model="selectedCategoryIds"
     />
-    <div><label for="">tên slug</label></div>
-    <div class="text-class">
-      <input class="form-control" v-model="editclass" placeholder="Nhập slug" />
+    <span :style="{ color: selectedCategoryIds.includes(item.id) ? 'black' : 'gray' }">
+      {{ item.name }}
+    </span>
+  </label>
+</div>
     </div>
+  </div>
+  
 
-    <div><label for="">Chi tiết</label></div>
-    <textarea
-      name=""
-      v-model="editdetail"
-      id="editor"
-      cols="30"
-      rows="10"
-    ></textarea>
-    <br />
 
-    <img
-      :src="img_product"
-      alt="Ảnh sản phẩm"
-      v-if="img_product"
-      width="200px"
-    />
-    <input type="file" name="img_product" @change="onFileChange" />
 
-    <div>
-      <div class="row">
-        <div class="col-2"><label>Chọn danh mục:</label></div>
-        <div class="col-10">
-          <div v-for="item in categories_all" :key="item.id">
-            <label>
-              <input
-                type="checkbox"
-                :value="item.id"
-                v-model="selectedCategoryIds"
-              />
-              <span
-                :style="{
-                  color: selectedCategoryIds.includes(item.id)
-                    ? 'black'
-                    : 'gray',
-                }"
-              >
-                {{ item.name }}
-              </span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- <select multiple v-model="selectedCategoryIds">
+<!-- <select multiple v-model="selectedCategoryIds">
   <option
     v-for="item in categories_all"
     :key="item.id"
@@ -64,12 +45,10 @@
     {{ item.name }}
   </option>
 </select> -->
-    </div>
+</div>
 
-    <button class="btn btn-primary" @click="updateProduct(route.params.id)">
-      edit
-    </button>
-  </div>
+      <button class="btn btn-primary" @click="updateProduct(route.params.id)">edit</button>
+    </div>
 </template>
 
 <script setup>
@@ -112,6 +91,7 @@ const selectedCategoryIds = ref([]); // Gán ID những category đã chọn
 // })
 // chọn file ảnh
 
+
 const onFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -119,6 +99,7 @@ const onFileChange = (event) => {
     img_product.value = URL.createObjectURL(file); // Hiển thị ảnh trước khi upload
   }
 };
+
 
 // 🟢 Hàm lấy thông tin sản phẩm
 const fetchProduct = async () => {
@@ -131,28 +112,29 @@ const fetchProduct = async () => {
       img_product.value = data.flight.image;
       editdetail.value = data.flight.detail;
 
-      // CKEDITOR.instances.editor.setData(data.flight.detail);  // Gán nội dung vào CKEditor
-
-      categories.value = data.category;
-      selectedCategoryIds.value = data.category.map((item) => item.id); // Mảng các id category đã gán
-
+        // CKEDITOR.instances.editor.setData(data.flight.detail);  // Gán nội dung vào CKEditor
+      
+       categories.value = data.category;
+  selectedCategoryIds.value = data.category.map(item => item.id); // Mảng các id category đã gán
+     
       categories_all.value = data.categories;
+      
+ if (window.CKEDITOR) {
+    // CKEDITOR.replace("editor");
+      CKEDITOR.replace('editor', {
+    filebrowserBrowseUrl: '/ckfinder/browser', // Browse file
+    filebrowserUploadUrl: '/media/upload',     // Upload file
+    filebrowserImageBrowseUrl: '/ckfinder/browser?type=Images',
+    filebrowserImageUploadUrl: '/media/upload?type=Images'
+  });
 
-      if (window.CKEDITOR) {
-        // CKEDITOR.replace("editor");
-        CKEDITOR.replace("editor", {
-          filebrowserBrowseUrl: "/ckfinder/browser", // Browse file
-          filebrowserUploadUrl: "/media/upload", // Upload file
-          filebrowserImageBrowseUrl: "/ckfinder/browser?type=Images",
-          filebrowserImageUploadUrl: "/media/upload?type=Images",
-        });
-
-        CKEDITOR.instances.editor.on("instanceReady", () => {
-          if (editdetail.value) {
-            CKEDITOR.instances.editor.setData(editdetail.value);
-          }
-        });
+    CKEDITOR.instances.editor.on("instanceReady", () => {
+      if (editdetail.value) {
+        CKEDITOR.instances.editor.setData(editdetail.value);
       }
+    });
+  }
+
     } else {
       console.error("Không tìm thấy sản phẩm");
     }
@@ -161,10 +143,13 @@ const fetchProduct = async () => {
   }
 };
 
+
 // 🟢 Khi đường dẫn thay đổi, tự động lấy sản phẩm mới
 watchEffect(() => {
   if (productId.value) fetchProduct();
 });
+
+
 
 const updateProduct = async (id) => {
   // if (!selectedFile.value) {
@@ -178,7 +163,7 @@ const updateProduct = async (id) => {
   formData.append("name", editedName.value);
   formData.append("class", editclass.value);
   formData.append("image", selectedFile.value); // 🟢 Gửi file ảnh
-  formData.append("detail", CKEDITOR.instances.editor.getData());
+  formData.append("detail", CKEDITOR.instances.editor.getData()); 
   selectedCategoryIds.value.forEach((id, index) => {
     formData.append(`categories[${index}]`, id);
   });
@@ -222,18 +207,18 @@ const updateProduct = async (id) => {
 //         class: editclass.value,
 //         image: img_product.value
 //        }),
-
+      
 //     });
 
 //     if (response.ok) {
-
+      
 //       const updatedProduct = todos.value.find(p => p.id === id);
 //       if (updatedProduct) updatedProduct.name = editedName.value;
 //  updatedProduct.class = editclass.value;
 //   updatedProduct.image = img_product.value;
-
+  
 //       editingId.value = null; // Ẩn form sửa
-
+      
 //     } else {
 //       alert("Cập nhật thất bại!");
 //     }
@@ -249,10 +234,11 @@ const updateProduct = async (id) => {
 <style>
 select[multiple] {
   width: max-content;
-
+  
   padding: 5px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
+
 </style>

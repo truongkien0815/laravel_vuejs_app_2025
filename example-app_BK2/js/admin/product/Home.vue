@@ -3,10 +3,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
+
 // Dấu @ thường là alias cho thư mục resources/js trong các dự án Laravel + Vite hoặc Webpack (tuỳ vào cấu hình).
 import appcopy from "@/Appcopy.vue";
 import { useToast } from "vue-toastification";
 const toast = useToast();
+
 
 const todos = ref([]);
 const categories = ref([]);
@@ -26,6 +28,7 @@ const nextPage = ref(null);
 
 // import { RouterView, RouterLink } from 'vue-router';
 
+
 // Lấy danh sách sản phẩm từ API
 
 // không phân trang
@@ -44,7 +47,7 @@ const fetchFlights = async (page = 1) => {
     const data = await response.json();
 
     todos.value = data.data;
-    categories.value = data.categories;
+     categories.value = data.categories;
 
     currentPage.value = data.current_page;
     lastPage.value = data.last_page;
@@ -58,9 +61,39 @@ const fetchFlights = async (page = 1) => {
 // 🟢 Gọi API khi component được mount
 onMounted(() => fetchFlights());
 
-//
+// 
 
-const showdetail = ref();
+
+
+// Thêm sản phẩm
+const addProduct = async () => {
+  if (!newProductName.value.trim()) {
+    alert("Vui lòng nhập tên sản phẩm!");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/user_add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: newProductName.value,
+        class: newProductClass.value,
+      }),
+    });
+
+    if (response.ok) {
+      const newProduct = await response.json();
+      todos.value.push(newProduct); // Thêm vào danh sách
+      newProductName.value = ""; // Xóa input sau khi thêm
+      newProductClass.value = "";
+    } else {
+      alert("Thêm sản phẩm thất bại!");
+    }
+  } catch (error) {
+    console.error("Lỗi khi thêm sản phẩm:", error);
+  }
+};
 
 const showProduct = async (id) => {
   try {
@@ -70,12 +103,43 @@ const showProduct = async (id) => {
       console.log("Sản phẩm:", product); // Debug
       showId.value = product.flight.id;
       showName.value = product.flight.name;
-      showdetail.value = product.flight.detail;
     } else {
       alert("Không tìm thấy sản phẩm!");
     }
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu:", error);
+  }
+};
+
+// Chỉnh sửa sản phẩm
+const editProduct = (product) => {
+  editingId.value = product.id;
+  editedName.value = product.name;
+};
+
+// Cập nhật sản phẩm
+const updateProduct = async (id) => {
+  try {
+    const response = await fetch(`/api/user_update/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: editedName.value,
+        class: "editedName.value",
+      }),
+    });
+
+    if (response.ok) {
+      const updatedProduct = todos.value.find((p) => p.id === id);
+      if (updatedProduct) updatedProduct.name = editedName.value;
+      updatedProduct.class = "editedName.value";
+
+      editingId.value = null; // Ẩn form sửa
+    } else {
+      alert("Cập nhật thất bại!");
+    }
+  } catch (error) {
+    console.error("Lỗi khi cập nhật:", error);
   }
 };
 
@@ -93,7 +157,7 @@ const deleteProduct = async (id) => {
       });
       if (response.ok) {
         todos.value = todos.value.filter((product) => product.id !== id);
-        toast.success("Đã xóa thành công!", {
+              toast.success("Đã xóa thành công!", {
           toastClassName: "custom-delete-toast",
         });
 
@@ -106,6 +170,8 @@ const deleteProduct = async (id) => {
     }
   }
 };
+
+
 
 const searchFlights = async () => {
   if (keyword.value.trim() === "") {
@@ -129,6 +195,7 @@ const searchFlights = async () => {
     console.log("Lỗi API:");
   }
 };
+
 </script>
 
 
@@ -136,7 +203,7 @@ const searchFlights = async () => {
 <template>
   <!-- Hiển thị component theo route -->
   <router-view />
-
+ 
   <!-- <appcopy/> -->
   <div class="container">
     <h1>Danh sách sản phẩm</h1>
@@ -155,9 +222,12 @@ const searchFlights = async () => {
         @input="searchFlights"
       />
 
-      <!--  -->
-    </div>
+<!--  -->
 
+
+   
+    </div>
+    
     <table border="1" style="width: 100%">
       <tr>
         <th style="width: 5%">ID</th>
@@ -166,9 +236,15 @@ const searchFlights = async () => {
         <th style="width: 20%">Image</th>
         <th style="width: 30%">Hành động</th>
       </tr>
-
+      
       <tr v-for="product in todos" :key="product.id">
-        <td>{{ product.id }}</td>
+
+  
+
+        <td>{{ product.id }}
+
+             
+        </td>
         <td v-if="editingId !== product.id">{{ product.name }}</td>
         <td v-else>
           <input v-model="editedName" />
@@ -194,7 +270,7 @@ const searchFlights = async () => {
               <div class="modal-content">
                 <div class="modal-header">
                   <h1 class="modal-title fs-5" id="exampleModalToggleLabel">
-                    Modal Chi tiết
+                    Modal 1
                   </h1>
                   <button
                     type="button"
@@ -206,7 +282,6 @@ const searchFlights = async () => {
                 <div class="modal-body">
                   <input type="text" v-model="showId" />
                   <input type="text" v-model="showName" />
-                  <div class="content-body" v-html="showdetail"></div>
                 </div>
               </div>
             </div>
@@ -222,14 +297,13 @@ const searchFlights = async () => {
             detail
           </button>
 
-          <button class="btn btn-danger" @click="deleteProduct(product.id)">
-            Xóa
-          </button>
-
-          <router-link :to="'/editproduct/' + product.id">
-            <div class="btn btn-warning">Edit</div></router-link
-          >
+          <!-- <button v-if="editingId !== product.id" @click="editProduct(product)">Sửa</button> -->
+          <button v-else @click="updateProduct(product.id)">Lưu</button>
+          <button class="btn btn-danger" @click="deleteProduct(product.id)">Xóa</button>
+        
+          <router-link :to="'/editproduct/' + product.id"> <div class="btn btn-warning">Edit</div></router-link>
         </td>
+      
       </tr>
     </table>
     <div>
@@ -250,7 +324,11 @@ const searchFlights = async () => {
         Sau ❯
       </button>
     </div>
+
+   
+
   </div>
+  
 </template>
 
 <style>
@@ -266,18 +344,20 @@ const searchFlights = async () => {
 }
 
 .cart {
+ 
   margin-top: 20px;
 }
 .cart button {
   margin-left: 10px;
 }
-.card-text {
+.card-text{
   height: 40px;
 }
 .custom-delete-toast {
   background-color: #e74c3c !important; /* đỏ */
   color: white;
 }
+
 </style>
 
 
