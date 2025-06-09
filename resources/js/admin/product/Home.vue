@@ -4,7 +4,7 @@
 import { ref, onMounted } from "vue";
 
 // Dấu @ thường là alias cho thư mục resources/js trong các dự án Laravel + Vite hoặc Webpack (tuỳ vào cấu hình).
-import appcopy from "@/Appcopy.vue";
+// import appcopy from "@/Appcopy.vue";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 
@@ -169,10 +169,11 @@ const searchFlights = async () => {
 
       <tr v-for="product in todos" :key="product.id">
         <td>{{ product.id }}</td>
-        <td v-if="editingId !== product.id">{{ product.name }}</td>
+        <td>{{ product.name }}</td>
+        <!-- <td v-if="editingId !== product.id">{{ product.name }}</td>
         <td v-else>
           <input v-model="editedName" />
-        </td>
+        </td> -->
         <td>{{ product.class }}</td>
         <td>
           <img

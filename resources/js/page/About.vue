@@ -3,7 +3,7 @@
     <h1>Trang giới thiệu</h1>
     
     <div>
-    Chào mọi người
+    Chào mọi người, 
 
 
     </div>

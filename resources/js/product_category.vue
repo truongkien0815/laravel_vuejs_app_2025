@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- <input type="text" v-model="categoryId" placeholder="Nhập Category ID" /> -->
-
     <ul style="display:flex">
       <li class="li_cate" v-for="product in products" :key="product.id">
         <div class="btn"  :class="{
@@ -15,7 +13,7 @@
       
     </ul>
 
-    <!-- <h3> sản phẩm theo loại </h3> -->
+   
      <li v-if="find">{{ find }}</li>
        <div v-if="loading" class="spinner-border" role="status">
   <span class="visually-hidden">Loading...</span>
@@ -44,6 +42,22 @@
       </li>
     </ul>
   </div>
+
+  <!-- <ul style="display:flex">
+      <li class="li_cate" v-for="product in products" :key="product.id">
+        <div class="btn"  :class="{
+      'btn-primary': route.params.id  !== product.id.toString(),
+      'btn-success': route.params.id  === product.id.toString()
+    }">
+      <router-link :to="'/about2/' + product.id" class="nav-cate text-white">
+             {{ product.name }}</router-link
+              >
+       
+        </div>
+      </li>
+      
+    </ul>
+   <router-view /> -->
 </template>
 
 
@@ -54,8 +68,8 @@ defineProps({
 });
 // 
 import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
-
+import { useRoute, RouterLink } from 'vue-router';
+const route = useRoute();
 
 
 const products = ref([]);

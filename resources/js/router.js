@@ -49,24 +49,50 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('./Appcopy.vue'),
+      component: () => import('./page/About.vue'),
     },
     {
       path: '/contact',
       name: 'contact',
-      component: () => import('./Contact.vue'),
+      component: () => import('./Product.vue'),
+      // 
+  //      children: [
+  //   {
+  //     path: '/about2/:id',
+
+  //     component: () => import('./product_category2.vue')
+  //   }
+  // ]
+      // 
+      
+    },
+
+     {
+      path: '/about2/:id',
+      name: 'about2',
+       component: () => import('./product_category2.vue')
+      // 
+ 
+  //   {
+  //     path: '/about2/:id',
+
+  //     component: () => import('./product_category2.vue')
+  //   }
+
+      // 
+      
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('./login.vue'),
+      component: () => import('./login/login.vue'),
     },
 
     // 
     {
       path: '/:id',
       name: 'single_post',
-      component: () => import('./single.vue'),
+      component: () => import('./product/single.vue'),
     },
   ],
 })

@@ -98,7 +98,7 @@ const toast = useToast();
 const router = useRouter();
 //
 
-import appcopy from "../../Appcopy.vue";
+// import appcopy from "../../about.vue";
 
 const categories = ref([]);
 const categories_all = ref([]);

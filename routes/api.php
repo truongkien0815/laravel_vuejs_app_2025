@@ -21,7 +21,9 @@ Route::get('/category/{id}', 'App\Http\Controllers\CategoryController@show');
 Route::post('/category_update/{id}', 'App\Http\Controllers\CategoryController@update');
 Route::post('/category_add',  'App\Http\Controllers\CategoryController@add');
 
-Route::get('/cate_product','App\Http\Controllers\HomeController@cate_product');
+Route::get('/cate_product/{id}','App\Http\Controllers\HomeController@cate_product');
+
+Route::get('/cate_product','App\Http\Controllers\HomeController@cate_product_select');
 // 
 
 

@@ -12,9 +12,33 @@ use function Laravel\Prompts\alert;
 
 class HomeController extends Controller
 {
+
+
+      public function cate_product($id)
+{
+    $categoryId = $id;
+    if ($categoryId) {
+        // Lấy category kèm các sản phẩm liên quan
+        $category = Category::with('flights')->find($categoryId);
+        $users = $category ? $category->flights : [];
+    } else {
+        // Không lọc, lấy tất cả sản phẩm
+        $users = Flight::all();
+    }
+
+    $categories = Category::all();
+
+    return response()->json([
+        'users' => $users,
+        'categories' => $categories,
+        'category' => $category
+    ]);
+}
+
+
     // Hàm hiển thị
 
-      public function cate_product(Request $request)
+      public function cate_product_select(Request $request)
 {
     $categoryId = $request->input('category_id');
     if ($categoryId) {
